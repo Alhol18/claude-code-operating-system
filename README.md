@@ -4,7 +4,7 @@ This is how I run a small e-commerce business with Claude Code as the daily oper
 
 I own the brand and for years did almost every job in it by hand: orders, shipping, bookkeeping, support, content, ads. Over the past year I rebuilt those jobs as processes that an agent runs and I approve. This repository is the brand-neutral extract of that setup: the instruction file the agent reads at the start of every session, the rules for choosing a model, the hooks, one skill, and a few tools.
 
-The working repositories stay private. They hold customer data, finances and the brand voice. Everything here is taken from them, translated to English and cleaned of names, numbers and keys.
+The working repositories stay private. They hold customer data, finances and the brand voice. Everything here is taken from them, translated to English and cleaned of names, business figures and keys.
 
 ## The idea
 
@@ -50,9 +50,9 @@ flowchart LR
 4. **Verification takes a different route than the work.** Code is reviewed by another model. Copy passes a gate skill. A file is checked in the place where the recipient will open it.
 5. **The last word is human.** The agent prepares the judgment and argues for it. I sign it. Open decisions that only I can make sit in a queue, and that queue outranks any new build.
 
-## Size today
+## Size
 
-As of October 2026 the private setup holds 88 Python tools and data collectors, 18 project skills, 215 memory notes and a knowledge base of 188 pages. The agent repositories are committed automatically every evening.
+As of 10 October 2026 the private setup behind this extract holds 88 Python tools and data collectors, 18 project skills, 214 memory notes and a knowledge base of 188 pages. The agent repositories are committed automatically every evening.
 
 ## What runs on it
 

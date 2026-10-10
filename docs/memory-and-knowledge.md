@@ -27,7 +27,7 @@ A check that repeats the route of the work repeats its mistakes.
 **How to apply:** numbers from the shop API are checked against the bank export, not against the same API.
 ```
 
-**The index is the only thing loaded every session.** `MEMORY.md` holds one line per note, grouped by domain: working style, voice, business state, content, ads, site, infrastructure. The agent reads the index, then opens only the notes a task needs. The private index currently points at 215 notes.
+**The index is the only thing loaded every session.** `MEMORY.md` holds one line per note, grouped by domain: working style, voice, business state, content, ads, site, infrastructure. The agent reads the index, then opens only the notes a task needs. As of 10 October 2026 the private index points at 214 notes.
 
 **Closed items leave the index.** Finished and frozen topics move to an archive file that is not loaded automatically.
 
