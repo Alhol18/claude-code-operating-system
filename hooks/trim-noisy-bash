@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+"""PreToolUse(Bash): wraps noisy commands so only error lines and last 30
+are visible in context. PostToolUse cannot rewrite output. updatedInput
+is available only on PreToolUse."""
+import sys, json, re
+
+NOISY = re.compile(r"""(?:^|[;&|]\s*|\bsudo\s+)(
+    npm\s+(?:i|ci|install|test|run|audit)\b | yarn\b | pnpm\s+(?:i|install|build|test)\b |
+    pip3?\s+install\b | uv\s+(?:pip|sync|add)\b | poetry\s+install\b |
+    pytest\b | jest\b | vitest\b | go\s+(?:build|test)\b | cargo\s+(?:build|test)\b |
+    tsc\b | webpack\b | vite\s+build\b | next\s+build\b |
+    make\b | cmake\b | docker\s+build\b | brew\s+(?:install|upgrade|update)\b |
+    ffmpeg\b | ffprobe\b | yt-dlp\b |
+    wrangler\s+deploy\b | npx\s+.*wrangler\s+deploy\b |
+    shopify\s+theme\s+(?:push|pull|dev)\b |
+    terraform\s+(?:plan|apply)\b | gradle\b | mvn\b
+)""", re.X)
+
+# already manually limited: do not touch
+ALREADY = re.compile(r"trim-output\.py|\|\s*(head|tail)\b|>\s*[^&\s]")
+
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    sys.exit(0)
+
+if d.get("tool_name") != "Bash":
+    sys.exit(0)
+ti = d.get("tool_input") or {}
+cmd = ti.get("command", "")
+if not cmd or not NOISY.search(cmd) or ALREADY.search(cmd):
+    sys.exit(0)
+
+wrapped = (
+    '_tf=$(mktemp)\n'
+    '{\n' + cmd + '\n} >"$_tf" 2>&1\n'
+    '_rc=$?\n'
+    'python3 ' + __import__("os").path.expanduser("~/.claude/hooks/trim-output.py") + ' "$_tf"\n'
+    'rm -f "$_tf"\n'
+    '(exit $_rc)\n'
+)
+new = dict(ti); new["command"] = wrapped
+print(json.dumps({
+    "systemMessage": "output trimmed to errors and last 30 lines",
+    "hookSpecificOutput": {
+        "hookEventName": "PreToolUse",
+        "updatedInput": new,
+    }
+}))

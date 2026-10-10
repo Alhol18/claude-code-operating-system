@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Reaper: kills stuck Playwright headless-chrome pinned at high CPU.
+# Fires on Stop hook (between turns): a headless shell at >80% CPU here is
+# orphaned/stuck, never a browser actively driven by QA.
+LOG="$HOME/.claude/reaper.log"
+while read -r pid pcpu; do
+  int="${pcpu%.*}"
+  if [ "${int:-0}" -ge 80 ] 2>/dev/null; then
+    if kill -9 "$pid" 2>/dev/null; then
+      echo "$(date '+%F %T') reaped headless pid=$pid cpu=${pcpu}%" >> "$LOG"
+    fi
+  fi
+done < <(ps -Ao pid=,pcpu=,comm= | awk '/chrome-headless-shell/{print $1, $2}')
+exit 0
